@@ -46,7 +46,7 @@
           <article class="verdict verdict-primary">
             <span class="verdict-label">主规模款</span>
             <strong>普通款</strong>
-            <p>卖2补1兑现后，核算货品成本为68.67元/箱。适合达人分销、品牌自播和商品卡共同放量。</p>
+            <p>卖2补1兑现后，核算进货成本为68.67元/箱。适合达人分销、品牌自播和商品卡共同放量。</p>
           </article>
           <article class="verdict">
             <span class="verdict-label">利润敏感款</span>
@@ -75,7 +75,7 @@
           <span class="live-state">LIVE MODEL</span>
         </div>
 
-        <div class="segmented" role="group" aria-label="选择货品成本口径">
+        <div class="segmented" role="group" aria-label="选择进货成本口径">
           <button type="button" class="quick-sku active" data-quick-sku="regular-supported">普通款 · 补货已兑现</button>
           <button type="button" class="quick-sku" data-quick-sku="regular-cash">普通款 · 现金口径</button>
           <button type="button" class="quick-sku" data-quick-sku="custom">定制口味</button>
@@ -334,22 +334,35 @@
         <form class="pnl-controls" id="pnl-form">
           <div class="input-section">
             <h3>收入与货品</h3>
-            <label>零售价
-              <select id="price">
-                <option value="159">159元</option>
-                <option value="169">169元</option>
-              </select>
-            </label>
-            <label>货品口径
-              <select id="sku-cost">
-                <option value="68.6667">普通款 · 补货已兑现 68.67元</option>
-                <option value="103">普通款 · 现金口径 103元</option>
-                <option value="88">定制口味 88元</option>
-              </select>
-            </label>
+            <div class="editable-money">
+              <label for="price">消费者零售价/箱</label>
+              <div class="money-input">
+                <span aria-hidden="true">¥</span>
+                <input id="price" type="number" min="0.01" max="100000" step="0.01" value="159" inputmode="decimal" required aria-describedby="price-hint pnl-input-error">
+              </div>
+              <small id="price-hint">可输入任意实际成交零售价</small>
+              <div class="money-presets" aria-label="零售价快捷值">
+                <button type="button" data-money-target="price" data-money-value="159">159 常用</button>
+                <button type="button" data-money-target="price" data-money-value="169">169 常用</button>
+              </div>
+            </div>
+            <div class="editable-money">
+              <label for="sku-cost">进货成本/箱</label>
+              <div class="money-input">
+                <span aria-hidden="true">¥</span>
+                <input id="sku-cost" type="number" min="0.01" max="100000" step="0.01" value="68.67" inputmode="decimal" required aria-describedby="cost-hint pnl-input-error">
+              </div>
+              <small id="cost-hint">输入经销商实际采购成本</small>
+              <div class="money-presets" aria-label="进货成本快捷值">
+                <button type="button" data-money-target="sku-cost" data-money-value="68.6667">68.67 补货兑现</button>
+                <button type="button" data-money-target="sku-cost" data-money-value="88">88 定制口味</button>
+                <button type="button" data-money-target="sku-cost" data-money-value="103">103 现金口径</button>
+              </div>
+            </div>
             <label>月支付订单
               <input id="orders" type="number" min="1" max="100000" step="100" value="2000">
             </label>
+            <p class="input-error" id="pnl-input-error" role="alert" hidden>零售价和进货成本都必须填写大于0的金额。</p>
           </div>
 
           <div class="input-section">
@@ -391,10 +404,10 @@
           </details>
 
           <button class="reset-button" type="button" id="reset-model">恢复当前渠道基准情景</button>
-          <p class="assumption-note">当前默认值是启动测算参数，不是迈胜后台数据。平台费率须以抖店当前类目账单为准。</p>
+          <p class="assumption-note">当前默认值是启动测算参数，不是迈胜后台数据。请用实际零售价、进货成本和抖店类目账单费率替换。</p>
         </form>
 
-        <div class="pnl-results" aria-live="polite">
+        <div class="pnl-results" id="pnl-results" aria-live="polite">
           <div class="result-head">
             <div>
               <span id="scenario-label">品牌自播 · 基准情景</span>
@@ -415,7 +428,7 @@
               <span>退款后收入</span><i id="wf-revenue"></i><b id="wf-revenue-label">+¥146.28</b>
             </div>
             <div class="waterfall-row">
-              <span>货品成本</span><i id="wf-goods"></i><b id="wf-goods-label">-¥68.67</b>
+              <span>进货成本</span><i id="wf-goods"></i><b id="wf-goods-label">-¥68.67</b>
             </div>
             <div class="waterfall-row">
               <span>平台与税费</span><i id="wf-fees"></i><b id="wf-fees-label">-¥9.54</b>
@@ -585,7 +598,7 @@
         <li><b>确定事实</b>：用户提供的内部进货条件、公开官网和一手采访。</li>
         <li><b>行业样本</b>：用于确定资源顺序，不冒充迈胜后台。</li>
         <li><b>内部建议参数</b>：达人佣金、退款、人工、投流等均可编辑，用来反推经营边界。</li>
-        <li><b>普通款成本</b>：68.67元是卖2补1兑现后的核算货品成本；补货未兑现前，现金仍按103元/箱管理。</li>
+        <li><b>普通款成本</b>：68.67元是卖2补1兑现后的核算进货成本；补货未兑现前，现金仍按103元/箱管理。</li>
         <li><b>运费</b>：88元和103元已含品牌到经销商的进货运费；发往消费者的仓配、包材和快递仍在模型中单独计入。</li>
       </ul>
     </form>
