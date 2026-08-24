@@ -187,6 +187,32 @@
 
   const valueOf = (input) => Number.parseFloat(input.value) || 0;
 
+  function syncMoneyPresets() {
+    document.querySelectorAll("[data-money-target]").forEach((button) => {
+      const input = byId(button.dataset.moneyTarget);
+      const current = Number.parseFloat(input.value);
+      const preset = Number.parseFloat(button.dataset.moneyValue);
+      const active = Number.isFinite(current) && Math.abs(current - preset) < 0.005;
+      button.setAttribute("aria-pressed", active ? "true" : "false");
+    });
+  }
+
+  function validateMoneyInputs() {
+    const invalidInputs = [inputs.price, inputs.skuCost].filter((input) => {
+      const value = Number.parseFloat(input.value);
+      return !Number.isFinite(value) || value <= 0;
+    });
+
+    [inputs.price, inputs.skuCost].forEach((input) => {
+      input.setAttribute("aria-invalid", invalidInputs.includes(input) ? "true" : "false");
+    });
+
+    const valid = invalidInputs.length === 0;
+    byId("pnl-input-error").hidden = valid;
+    byId("pnl-results").classList.toggle("model-invalid", !valid);
+    return valid;
+  }
+
   function readModel() {
     return Object.fromEntries(Object.entries(inputs).map(([key, input]) => [key, valueOf(input)]));
   }
@@ -244,6 +270,13 @@
     byId("commission-output").textContent = `${valueOf(inputs.commission)}%`;
     byId("service-output").textContent = `${valueOf(inputs.serviceRate)}%`;
     byId("ad-output").textContent = `${valueOf(inputs.adRate)}%`;
+
+    syncMoneyPresets();
+    if (!validateMoneyInputs()) {
+      byId("profit-verdict").className = "danger";
+      byId("profit-verdict").textContent = "请先修正输入金额";
+      return;
+    }
 
     const data = readModel();
     const result = calculate(data);
@@ -457,12 +490,17 @@
   }
 
   function copySummary() {
+    if (!validateMoneyInputs()) {
+      showToast("请先填写有效的零售价和进货成本");
+      return;
+    }
+
     const data = readModel();
     const result = calculate(data);
     const summary = [
       `渠道：${modelDefaults[activeScenario].label}`,
       `零售价：${money(data.price, 0)}`,
-      `货品成本：${money(data.skuCost)}`,
+      `进货成本：${money(data.skuCost)}`,
       `退款率：${data.refund}%`,
       `平台费率：${data.platform}%`,
       `税费率：${data.tax}%`,
@@ -472,7 +510,7 @@
       `单箱贡献：${money(result.contribution)}`,
       `月度经营结果：${wholeMoney(result.monthlyProfit)}`,
       `盈亏平衡订单：${Number.isFinite(result.breakEvenOrders) ? result.breakEvenOrders : "无法保本"}`,
-      `口径：除进货价外均为可编辑内部测算参数。`
+      `口径：零售价、进货成本及各项费率均为可编辑内部测算参数。`
     ].join("\n");
 
     const fallback = () => {
@@ -493,6 +531,11 @@
   }
 
   Object.values(inputs).forEach((input) => input.addEventListener("input", updateOutputs));
+
+  document.querySelectorAll("[data-money-target]").forEach((button) => button.addEventListener("click", () => {
+    byId(button.dataset.moneyTarget).value = button.dataset.moneyValue;
+    updateOutputs();
+  }));
 
   document.querySelectorAll(".scenario-tab").forEach((button) => button.addEventListener("click", () => applyScenario(button.dataset.scenario)));
   byId("reset-model").addEventListener("click", () => applyScenario(activeScenario));
