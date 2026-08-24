@@ -1244,6 +1244,109 @@ h3 {
   font-size: 11px;
 }
 
+.editable-money {
+  min-width: 0;
+}
+
+.editable-money > label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.money-input {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8fafc;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.money-input:focus-within {
+  border-color: var(--blue);
+  box-shadow: 0 4px 18px rgba(21, 87, 255, 0.12);
+}
+
+.money-input > span {
+  color: var(--blue-dark);
+  text-align: center;
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-weight: 700;
+}
+
+.money-input input[type="number"] {
+  min-height: 40px;
+  border: 0;
+  border-left: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-weight: 700;
+}
+
+.money-input input[type="number"]:focus-visible {
+  outline: 0;
+}
+
+.money-input:has(input[aria-invalid="true"]) {
+  border-color: #c83a3a;
+  box-shadow: 0 4px 18px rgba(200, 58, 58, 0.12);
+}
+
+.editable-money > small {
+  display: block;
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.money-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 9px;
+}
+
+.money-presets button {
+  min-height: 29px;
+  padding: 5px 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--blue-dark);
+  background: var(--surface);
+  font-size: 10px;
+  font-weight: 700;
+  transition: color 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.money-presets button:hover {
+  border-color: rgba(21, 87, 255, 0.5);
+}
+
+.money-presets button[aria-pressed="true"] {
+  border-color: var(--blue);
+  color: #fff;
+  background: var(--blue);
+}
+
+.input-error {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: #a52626;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.pnl-results.model-invalid .core-results,
+.pnl-results.model-invalid .waterfall,
+.pnl-results.model-invalid .sensitivity {
+  opacity: 0.45;
+}
+
 .input-section label:has(input[type="range"]) {
   grid-column: 1 / -1;
   display: grid;
